@@ -1,0 +1,15 @@
+
+watchalomg = import ReduceCapacityIcon from '@mui/icons-material/ReduceCapacity';
+
+details color code =#9b9b9b
+
+ <Item><FeedIcon/>Feeds</Item>
+        <Item><PlaylistAddIcon/>Playlist</Item>
+        <Item><CastForEducationIcon/>Education</Item>
+        <Item><FavoriteIcon/>Favorite</Item>
+        <Hr/>
+
+import FeedIcon from '@mui/icons-material/Feed';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import CastForEducationIcon from '@mui/icons-material/CastForEducation';
