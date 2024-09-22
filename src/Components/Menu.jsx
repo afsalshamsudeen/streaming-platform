@@ -1,12 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-import snooplay_logo from "../assets/youtube.png"
+import snooplay_logo from "../assets/snooplaylogo.png"
 import HomeIcon from '@mui/icons-material/Home';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HistoryIcon from '@mui/icons-material/History';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
-import ContrastIcon from '@mui/icons-material/Contrast';
 import ReduceCapacityIcon from '@mui/icons-material/ReduceCapacity';
 import { Link } from 'react-router-dom';
 
@@ -33,7 +32,7 @@ const Logo = styled.div`
 `;
 
 const Img = styled.img`
-  height: 55px;  
+  height: 35px;  
 `
 const Item = styled.div`
   display: flex;
@@ -91,7 +90,6 @@ const Menu = () => {
        
         <Item><SettingsSuggestIcon/>Settings</Item>
         <Item><HelpCenterIcon/>Help</Item>
-        <Item><ContrastIcon/>Theme</Item>
       </Wrapper>
     </Container>
   )

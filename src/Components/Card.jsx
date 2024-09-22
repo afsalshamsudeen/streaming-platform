@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 const Container = styled.div`
     width: ${(props)=>props.type !=="sm" && "360px"};
     margin-bottom: ${(props)=>props.type==="sm" ? "10px" : "45px"};
+    margin-top: ${(props)=>props.type==="sm" ? "10px" : "30px"};
     cursor: pointer;
     display: ${(props)=>props.type==="sm" && "flex"};
     gap: 10px;
