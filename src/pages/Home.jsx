@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Card from '../Components/Card'
+import Banner from '../Components/Banner'
 
 const Container = styled.div`
     display: flex;
@@ -11,6 +12,7 @@ const Container = styled.div`
 const Home = () => {
   return (
     <Container>
+        <Banner/>
         <Card/>
         <Card/>
         <Card/>
