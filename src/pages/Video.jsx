@@ -113,23 +113,19 @@ const Subscribe = styled.button`
 
 `;
 
+const VideoPlayer = styled.div`
+    height: 507px;
+    width: 100%;
+    background-color: #969696;
+`;
+
 
 const Video = () => {
   return (
     <Container>
       <Content>
         <VideoWrapper>
-          <iframe 
-            width="100%" 
-            height="507" 
-            src="https://www.youtube.com/embed/PaRqFtw97Mg?si=sEiyoyOMGVBh4u0-" 
-            title="YouTube video player" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" 
-            allowfullscreen
-            >
-            
-          </iframe>
+          <VideoPlayer></VideoPlayer>
         </VideoWrapper>
         <Title>Everything getting ready</Title>
         <Details>
