@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { useLocation, useParams } from 'react-router-dom';
 import styled from 'styled-components'
+import io from 'socket.io-client';
+
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ReplyIcon from '@mui/icons-material/Reply';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import Channel_image from "../assets/channel_image.jpg"
-import Comments from '../Components/Comments';
-import Card from '../Components/Card';
+
 
 const Container = styled.div`
   display: flex;
@@ -56,7 +58,7 @@ const Button = styled.div`
 
 `;
 
-const Recommendation = styled.div`
+const ChatOption = styled.div`
   flex: 2;
 `;
 
@@ -119,13 +121,53 @@ const VideoPlayer = styled.div`
     background-color: #969696;
 `;
 
+const socket = io('http://localhost:5000');
 
-const Video = () => {
+const WatchAlongRoom = () => {
+    const { roomCode } = useParams();
+  const { state } = useLocation();
+  const videoRef = useRef();
+  const [videoLink, setVideoLink] = useState(state?.videoLink || "");
+
+  useEffect(() => {
+    // Join the room when the component mounts
+    socket.emit('joinRoom', { roomCode });
+
+    socket.on('syncVideo', ({ action, currentTime }) => {
+      if (action === 'play') {
+        videoRef.current.play();
+      } else if (action === 'pause') {
+        videoRef.current.pause();
+      }
+      videoRef.current.currentTime = currentTime;
+    });
+
+    return () => {
+      socket.emit('leaveRoom', { roomCode });
+    };
+  }, [roomCode]);
+
+  const handlePlay = () => {
+    socket.emit('controlVideo', { action: 'play', currentTime: videoRef.current.currentTime, roomCode });
+  };
+
+  const handlePause = () => {
+    socket.emit('controlVideo', { action: 'pause', currentTime: videoRef.current.currentTime, roomCode });
+  };
+
   return (
     <Container>
       <Content>
         <VideoWrapper>
-          <VideoPlayer></VideoPlayer>
+          <VideoPlayer 
+            ref={videoRef} 
+            src={videoLink} 
+            controls 
+            onPlay={handlePlay}
+            onPause={handlePause}
+          >
+
+          </VideoPlayer>
         </VideoWrapper>
         <Title>Everything getting ready</Title>
         <Details>
@@ -153,27 +195,13 @@ const Video = () => {
           <Subscribe>Subscription</Subscribe>
         </Channel>
         <Hr/>
-        <Comments/>
       </Content>
       
-      <Recommendation>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-      </Recommendation>
+      <ChatOption>
+        
+      </ChatOption>
     </Container>
   )
 }
 
-export default Video
+export default WatchAlongRoom

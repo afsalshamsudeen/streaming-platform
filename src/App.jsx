@@ -7,6 +7,9 @@ import Home from "./pages/Home";
 import Video from "./pages/Video";
 import Login from "./pages/Signin";
 
+import WatchAlongRoom from "./pages/WatchAlongRoom";
+import WatchRoom from "./Components/WatchRoom";
+import { useState } from "react"; 
 
 const Container = styled.div`
   display: flex;
@@ -21,6 +24,8 @@ const Wrapper = styled.div`
 
 
 function App() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [createdRooms, setCreatedRooms] = useState([]);
   return (
     
   <Container>
@@ -36,6 +41,16 @@ function App() {
             <Route path="video">
               <Route path=":id" element={<Video/>}/>
             </Route>
+
+            <Route path="watchroom" 
+            element={
+            <WatchRoom 
+            setOpen={setIsOpen}
+            createdRooms={createdRooms}
+            setCreatedRooms={setCreatedRooms}
+            />} /> 
+                <Route path="watchalong/:roomCode" element={<WatchAlongRoom />} /> 
+
           </Route>
         </Routes>
       </Wrapper>

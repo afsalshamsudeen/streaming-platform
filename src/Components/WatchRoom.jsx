@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
+
+import WatchAlongRoom from '../pages/WatchAlongRoom';
 
 const Container = styled.div`
     width: 100%;
@@ -57,18 +60,49 @@ const Label = styled.label`
 `;
 
 const WatchRoom = ({setOpen}) => {
+  const [videoLink, setVideoLink] = useState("");
+  const [roomCode, setRoomCode] = useState("");
+  const navigate = useNavigate();
+
+  const createRoom = () => {
+    if (!videoLink) {
+      alert("Please provide a video link!");
+      return;
+    }
+
+    const newRoomCode = Math.random().toString(36).substring(2, 7); // Generate random room code
+    // Redirect to WatchAlongRoom with videoLink and roomCode
+    setOpen(false);
+    navigate(`/watchalong/${newRoomCode}`, { state: { videoLink } });
+  };
+
+  const joinRoom = () => {
+    if (!roomCode) {
+      alert("Please enter a room code!");
+      return;
+    }
+    setOpen(false);
+    navigate(`/watchalong/${roomCode}`);
+  };
+
   return (
     <Container>
       <Wrapper>
         <Close onClick={()=>setOpen(false)} >X</Close>
         <Title>WatchAlong</Title>
         <Label>Create Watchalong:</Label>
-        <Input placeholder='Video Link' type='link'/>
-        <Input placeholder='Room Code'/>
-        <Buttons>Create Watchalong</Buttons>
+        <Input placeholder='Video Link' value={videoLink}
+        onChange={(e)=> setVideoLink(e.target.value)}
+        />
+
+        <Buttons onClick={createRoom}>Create Watchalong</Buttons>
+
         <Label>Join Watchalong:</Label>
-        <Input placeholder='Room Code'/>
-        <Buttons>Join Watchalong</Buttons>
+        <Input placeholder='Room Code'
+        value={roomCode}
+        onChange={(e)=> setRoomCode(e.target.value)}
+        />
+        <Buttons onClick={joinRoom}>Join Watchalong</Buttons>
       </Wrapper>
     </Container>
   )
