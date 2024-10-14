@@ -124,7 +124,7 @@ const VideoPlayer = styled.div`
 const socket = io('http://localhost:5000');
 
 const WatchAlongRoom = () => {
-    const { roomCode } = useParams();
+  const { roomCode } = useParams();
   const { state } = useLocation();
   const videoRef = useRef();
   const [videoLink, setVideoLink] = useState(state?.videoLink || "");

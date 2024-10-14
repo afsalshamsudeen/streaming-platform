@@ -6,6 +6,7 @@ import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Home from "./pages/Home";
 import Video from "./pages/Video";
 import Login from "./pages/Signin";
+import NotFound from "./pages/NotFound";
 
 import WatchAlongRoom from "./pages/WatchAlongRoom";
 import WatchRoom from "./Components/WatchRoom";
@@ -48,8 +49,10 @@ function App() {
             setOpen={setIsOpen}
             createdRooms={createdRooms}
             setCreatedRooms={setCreatedRooms}
-            />} /> 
-                <Route path="watchalong/:roomCode" element={<WatchAlongRoom />} /> 
+            />} 
+            /> 
+                <Route path="watchalong/:roomCode"  element={<WatchAlongRoom />} /> 
+                <Route path="*" element={<NotFound />} />
 
           </Route>
         </Routes>
