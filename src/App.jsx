@@ -44,11 +44,11 @@ function App() {
             </Route>
 
             <Route path="watchroom" 
-            element={
+              element={
             <WatchRoom 
-            setOpen={setIsOpen}
-            createdRooms={createdRooms}
-            setCreatedRooms={setCreatedRooms}
+              setOpen={setIsOpen}
+              createdRooms={createdRooms}
+              setCreatedRooms={setCreatedRooms}
             />} 
             /> 
                 <Route path="watchalong/:roomCode"  element={<WatchAlongRoom />} /> 
