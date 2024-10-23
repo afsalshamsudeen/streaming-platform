@@ -1,5 +1,6 @@
 import { createError } from "../error.js";
 import User from "../Models/User.js";
+import Video from "../Models/Video.js";
 export const update = async (req,res,next)=>{
     if(req.params.id === req.user.id){
         try{
@@ -42,7 +43,7 @@ export const deleteUser = async (req,res,next)=>{
 }
 export const getUser = async (req,res,next)=>{
     try{
-        const user = await User.findById(req, params.id)
+        const user = await User.findById(req.params.id)
         res.status(200).json(user)
     }
     catch(err){
@@ -89,8 +90,15 @@ export const unSubscribe = async (req,res,next)=>{
     
 }
 export const like = async (req,res,next)=>{
+    const id = req.user.id;
+    const videoId = req.params.videoId;
     try{
+        await Video.findByIdAndUpdate(videoId,{
+            $addToSet:{likes:id},
+            $pull:{dislikes:id}
 
+        })
+        res.status(200).json("Video liked!")
     }
     catch(err){
         next(err)
@@ -98,8 +106,15 @@ export const like = async (req,res,next)=>{
     
 }
 export const disLike = async (req,res,next)=>{
+    const id = req.user.id;
+    const videoId = req.params.videoId;
     try{
+        await Video.findByIdAndUpdate(videoId,{
+            $addToSet:{dislikes:id},
+            $pull:{likes:id}
 
+        })
+        res.status(200).json("Video hasbeen diliked!")
     }
     catch(err){
         next(err)
