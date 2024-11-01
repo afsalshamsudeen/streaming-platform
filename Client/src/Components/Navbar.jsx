@@ -3,10 +3,10 @@ import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
 import Person2Icon from "@mui/icons-material/Person2";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import UploadVideo from "./UploadVideo";
 import { useSelector, useDispatch } from "react-redux";
-import Avatar  from "../assets/Avatar.jpg";
+import Avatar  from "../assets/user.png";
 import { logout } from "../redux/userSlice";
 
 const Container = styled.div`
@@ -35,6 +35,7 @@ const Search = styled.div`
   padding: 5px;
   border: 1px solid #373737;
   border-radius: 6px;
+  color: aliceblue;
 `;
 const Input = styled.input`
   border: none;
@@ -91,21 +92,25 @@ const SignOutButton = styled.button`
 `;
 
 const Navbar = () => {
+  const  navigate = useNavigate()
   const { currentUser } = useSelector((state) => state.user);
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
 
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logout()); // trigger the logout action
+
   };
 
-  const [open, setOpen] = useState(false);
+  
   return (
     <>
       <Container>
         <Wrapper>
           <Search>
-            <Input placeholder="Search" />
-            <SearchIcon />
+            <Input placeholder="Search" onChange={e=>setQ(e.target.value)} />
+            <SearchIcon onClick={()=>navigate(`/search?q=${q}`)} />
           </Search>
           <Upload>
           </Upload>

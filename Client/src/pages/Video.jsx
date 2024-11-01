@@ -13,6 +13,8 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { dislike, fetchSuccess, like } from "../redux/videoSlice";
 import { format } from "timeago.js";
+import { subscription } from "../redux/userSlice";
+import Recommendation from "../Components/Recommendation";
 
 const Container = styled.div`
   display: flex;
@@ -110,6 +112,12 @@ const VideoPlayer = styled.div`
   background-color: #969696;
 `;
 
+const VideoFrame = styled.video`
+  max-height: 720px;
+  width: 100%;
+  object-fit: cover;
+`;
+
 const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
   const { currentVideo } = useSelector((state) => state.video);
@@ -144,21 +152,49 @@ const Video = () => {
   }
 
   const handleLike = async ()=>{
-    await axios.put(`http://localhost:8000/api/users/like/${currentVideo._id}`)
+    await axios.put(`http://localhost:8000/api/users/like/${currentVideo._id}`,{}, { withCredentials: true })
     dispatch(like(currentUser._id))
-  }
+  };
   const handleDislike = async ()=>{
-    await axios.put(`http://localhost:8000/api/users/dislike/${currentVideo._id}`
+    await axios.put(`http://localhost:8000/api/users/dislike/${currentVideo._id}`,{}, { withCredentials: true }
     )
     dispatch(dislike(currentUser._id))
 
+  }
+  const handleSub = async ()=>{
+    // currentUser.subscribedUsers.includes(channel?._id) ?
+    // await axios.put(`http://localhost:8000/api/users/unsub/${channel._id}`,{}, { withCredentials: true }) :
+    // await axios.put(`http://localhost:8000/api/users/sub/${channel._id}`,{}, { withCredentials: true })
+    // dispatch(subscription(channel._id))
+    if (!channel?._id) {
+      console.error("Channel data is missing.");
+      return; // Exit if channel data is missing
+    }
+    try {
+      if (currentUser.subscribedUsers.includes(channel._id)) {
+        await axios.put(
+          `http://localhost:8000/api/users/unsub/${channel._id}`,
+          {},
+          { withCredentials: true }
+        );
+      } else {
+        await axios.put(
+          `http://localhost:8000/api/users/sub/${channel._id}`,
+          {},
+          { withCredentials: true }
+        );
+      }
+      dispatch(subscription(channel._id));
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   return (
     <Container>
       <Content>
         <VideoWrapper>
-          <VideoPlayer />
+          <VideoFrame src={currentVideo.videoUrl} controls/>
         </VideoWrapper>
         <Title>{currentVideo?.title || "Video Title"}</Title>{" "}
         {/* Optional chaining */}
@@ -169,11 +205,11 @@ const Video = () => {
           {/* Optional chaining */}
           <Buttons>
             <Button onClick={handleLike}> 
-              {currentVideo?.likes?.includes(currentUser._id) ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
+              {currentVideo?.likes?.includes(currentUser?._id) ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
             {currentVideo?.likes?.length }
             </Button>
             <Button onClick={handleDislike}>
-              {currentVideo?.dislikes?.includes(currentUser._id) ? <ThumbDownIcon /> :  <ThumbDownOffAltIcon />}
+              {currentVideo?.dislikes?.includes(currentUser?._id) ? <ThumbDownIcon /> :  <ThumbDownOffAltIcon />}
                 Dislike
               </Button>
             
@@ -203,10 +239,12 @@ const Video = () => {
               </VideoDescription>
             </ChannelDetailes>
           </ChannelInfo>
-          <Subscribe>Subscription</Subscribe>
+          <Subscribe onClick={handleSub}>{currentUser?.subscribedUsers?.includes(channel?._id) ? "Subscribed" : "Subscribe"}</Subscribe>
         </Channel>
-        <Comments />
+        <Comments  videoId={currentVideo._id}/>
       </Content>
+      <Title>Recommendations</Title>
+      <Recommendation tags={currentVideo.tags}/>
     </Container>
   );
 };

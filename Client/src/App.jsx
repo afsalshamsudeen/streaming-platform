@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Video from "./pages/Video";
 import Login from "./pages/Signin";
 import NotFound from "./pages/NotFound";
+import Search from "./pages/Search.jsx";
 
 import WatchAlongRoom from "./pages/WatchAlongRoom";
 import WatchRoom from "./Components/WatchRoom";
@@ -40,6 +41,7 @@ function App() {
             <Route index element={<Home type="random" />} /> 
             <Route path="trends" element={<Home type="trend"/>}/> 
             <Route path="subscriptions" element={<Home type="sub"/>}/> 
+            <Route path="search" element={<Search/>}/> 
             <Route path="/signin" element={<Login/>} /> 
             <Route path="video">
               <Route path=":id" element={<Video/>}/>
@@ -54,7 +56,7 @@ function App() {
             />} 
             /> 
                 <Route path="watchalong/:roomCode"  element={<WatchAlongRoom />} /> 
-                <Route path="*" element={<NotFound />} />
+                <Route path="*" element={<NotFound/>} />
 
           </Route>
         </Routes>

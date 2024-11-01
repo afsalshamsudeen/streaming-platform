@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Avatar_Img from "../assets/Avatar.jpg"
+import axios from 'axios';
 
 const Container = styled.div`
     display: flex;
@@ -39,14 +40,24 @@ const Text = styled.span`
 
 
 
-const Comment = () => {
+const Comment = ({comment}) => {
+  const [channel, setChannel] = useState({});
+
+  useEffect(() => {
+    const fetchComment = async () => {
+      const res = await axios.get(`http://localhost:8000/api/users/find/${comment.userId}`);
+      setChannel(res.data)
+    };
+    fetchComment();
+  }, [comment.userId]);
+
   return (
     <Container>
-      <AvatarImg src={Avatar_Img}/>
+      <AvatarImg src={channel.img}/>
       <Details>
-        <UserName>Jim Moriaty</UserName>
+        <UserName>{channel.name}</UserName>
         <Date>3 days ago</Date>
-        <Text>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</Text>
+        <Text>{comment.desc}</Text>
       </Details>
     </Container>
   )
