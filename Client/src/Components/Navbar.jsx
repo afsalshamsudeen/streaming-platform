@@ -75,6 +75,43 @@ const User = styled.div`
   cursor: pointer;
 `;
 
+const Tooltip = styled.div`
+  display: none;
+  position: absolute;
+  top: 40px;
+  left: 90%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: aliceblue;
+  padding: 20px 10px;
+  gap: 10px;
+  border-radius: 5px;
+  width: 200px;
+  text-align: center;
+  font-size: 14px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  ${User}:hover & {
+    display: block;
+  }
+  p{
+    padding: 6px;
+  }
+  .tooltip-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .info{
+    text-align: center;
+    line-height: 1.5;
+  }
+  .signout-btn{
+    margin-top: 10px;
+    width: 75%;
+  }
+`;
+
 const AvatarImg = styled.img`
   width: 32px;
   height: 32px;
@@ -99,7 +136,7 @@ const Navbar = () => {
 
   const dispatch = useDispatch();
   const handleLogout = () => {
-    dispatch(logout()); // trigger the logout action
+    dispatch(logout());
 
   };
 
@@ -118,8 +155,16 @@ const Navbar = () => {
             <User>
               <VideoCallIcon onClick={() => setOpen(true)} />{" "}
               <AvatarImg src={currentUser.img || Avatar} />
-              {currentUser.name}
-              <SignOutButton onClick={handleLogout}>Sign Out</SignOutButton>
+              <Tooltip>
+                <div className="tooltip-content">
+                <AvatarImg src={currentUser.img || Avatar} />
+                <div className="info">
+                <p><strong>Username :</strong> {currentUser.name}</p>
+                <p><strong>Email :</strong>{currentUser.email}</p>
+                </div>
+                <SignOutButton className="signout-btn" onClick={handleLogout}>Sign Out</SignOutButton>
+                </div>
+              </Tooltip>
             </User>
           ) : (
             <Link to="signin" style={{ textDecoration: "none" }}>

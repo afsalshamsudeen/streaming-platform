@@ -93,6 +93,19 @@ const Signin = () => {
 
   }
 
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    dispatch(loginStart());
+    try {
+      const res = await axios.post("http://localhost:8000/api/auth/signup", { name, email, password });
+      dispatch(loginSuccess(res.data));
+      navigate("/");
+    } catch (err) {
+      dispatch(loginFailure());
+    }
+  };
+  
+
 const signInWithGoogle = async() =>{
   dispatch(loginStart())
   signInWithPopup(auth,provider).then((result) =>{
@@ -125,7 +138,7 @@ const signInWithGoogle = async() =>{
         <Input placeholder='username' onChange={e=>setName(e.target.value)}/>
         <Input type='email' placeholder='email' onChange={e=>setEmail(e.target.value)}/>
         <Input type='password' placeholder='password' onChange={e=>setPassword(e.target.value)}/>
-        <Button>Sign Up</Button>
+        <Button onClick={handleSignup}>Sign Up</Button>
 
         <More>
           English(USA)
