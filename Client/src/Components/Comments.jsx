@@ -21,7 +21,7 @@ const Avatar = styled.img`
 const Input = styled.input`
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.soft};
-  color: ${({ theme }) => theme.text};
+  color: aliceblue;
   background-color: transparent;
   outline: none;
   padding: 5px;
@@ -33,6 +33,7 @@ const Comments = ({videoId}) => {
   const { currentUser } = useSelector((state) => state.user);
 
   const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -45,12 +46,45 @@ const Comments = ({videoId}) => {
   }, [videoId]);
 
   //TODO: ADD NEW COMMENT FUNCTIONALITY
+  const handleAddComment = async (event) => {
+    if (event.key === 'Enter' && newComment.trim() !== "") {
+      console.log("Comment:", newComment); 
+
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/api/comments',
+          {
+            desc: newComment,
+            videoId: videoId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`, 
+            },
+          }
+        );
+
+        console.log("Response:", response.data); 
+        setComments((prevComments) => [...prevComments, response.data]);
+        setNewComment(""); 
+
+      } catch (error) {
+        console.error("Error adding comment:", error.response?.data || error.message);
+      }
+    }
+  };
+  
 
   return (
     <Container>
       <NewComment>
         <Avatar src={currentUser?.img} />
-        <Input placeholder="Add a comment..." />
+        <Input placeholder="Add a comment..." 
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
+        onKeyDown={handleAddComment}
+        />
+        
       </NewComment>
       {comments.map(comment=>(
         <Comment key={comment._id} comment={comment}/>
