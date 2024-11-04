@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import banner_imag from "../assets/banner_image.jpeg";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   height: 450px;
@@ -10,15 +10,16 @@ const Container = styled.div`
   position: relative;
   background-size: cover;
   color: aliceblue;
+  /* background-color: rgba(0, 0, 0, 0.5); */
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures the image covers the container without distortion */
-    position: absolute; /* Position the image absolutely */
+    object-fit: cover;
+    position: absolute;
     top: 0;
     left: 0;
-    z-index: -1; /* Places the image behind other content */
+    z-index: -1;
   }
 `;
 
@@ -34,6 +35,8 @@ const Title = styled.h1`
   font-weight: 700;
   padding-bottom: 0.3rem;
   line-height: 1.3;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  
 `;
 
 const BannerBtns = styled.div`
@@ -72,6 +75,7 @@ const Desc = styled.h1`
   font-weight: 500;
   height: 80px;
   overflow: hidden;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 `;
 
 const FadeCover = styled.div`
@@ -83,7 +87,12 @@ const FadeCover = styled.div`
   );
 `;
 
-const Banner = ({ title, description, image }) => {
+const Banner = ({ title, description, image, videoId }) => {
+  const navigate = useNavigate();
+  const handlePlayClick = () => {
+    navigate(`/video/${videoId}`); // Navigate to the video page using the video ID
+  };
+
   const truncateTitle = (title, wordLimit) => {
     const words = title.split(" ");
     if (words.length <= wordLimit) {
@@ -104,12 +113,11 @@ const Banner = ({ title, description, image }) => {
   const truncatedDescription = truncateText(description, 20);
 
   return (
-    <Container >
-      <img src={image} alt="banner image"/>
+    <Container  style={{backgroundImage:`url(${image})`}}>
       <Wrapper>
         <Title>{truncatedTitle}</Title>
         <BannerBtns>
-          <PlayButton>
+          <PlayButton onClick={handlePlayClick}>
             <PlayArrowIcon />
             Play
           </PlayButton>

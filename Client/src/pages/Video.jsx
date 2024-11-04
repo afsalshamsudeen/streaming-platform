@@ -192,7 +192,7 @@ const Video = () => {
 
   return (
     <Container>
-      <Content>
+      <Content> 
         <VideoWrapper>
           <VideoFrame src={currentVideo.videoUrl} controls/>
         </VideoWrapper>
