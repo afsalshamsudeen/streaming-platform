@@ -7,6 +7,9 @@ import commentRoutes from "./routes/comments.js"
 import authRoutes from "./routes/auth.js"
 import cookieParser from "cookie-parser"
 import cors from "cors";
+import watchAlongRoutes from "./routes/watchAlongRoutes.js";
+import { Server } from "socket.io";
+import http from "http";
 
 
 const app = express()
@@ -34,6 +37,7 @@ app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/videos", videoRoutes)
 app.use("/api/comments", commentRoutes)
+app.use("/api/watchalong", watchAlongRoutes);
 
 app.use((err, req, res, next)=>{
     const status = err.status || 500;
@@ -45,7 +49,35 @@ app.use((err, req, res, next)=>{
     })
 })
 
-app.listen(8000,()=>{
+// Create HTTP server and attach Socket.IO
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "http://localhost:5173", // Your frontend URL
+        methods: ["GET", "POST"],
+    },
+});
+
+// Socket.IO Connection
+io.on("connection", (socket) => {
+    // console.log("A user connected:", socket.id);
+
+    socket.on("joinRoom", ({ roomCode }) => {
+        socket.join(roomCode);
+        // console.log(`User joined room: ${roomCode}`);
+    });
+
+    socket.on("controlVideo", ({ action, currentTime, roomCode }) => {
+        io.to(roomCode).emit("syncVideo", { action, currentTime });
+    });
+
+    socket.on("disconnect", () => {
+        // console.log("User disconnected:", socket.id);
+    });
+});
+
+
+server.listen(8000,()=>{
     connect()
     console.log("Server Up and Running!");
     

@@ -14,6 +14,7 @@ const Container = styled.div`
   top: 0;
   background-color: #202020;
   height: 50px;
+  z-index: 1000;
 `;
 const Wrapper = styled.div`
   display: flex;
@@ -76,7 +77,7 @@ const User = styled.div`
 `;
 
 const Tooltip = styled.div`
-  display: none;
+   display: none;
   position: absolute;
   top: 40px;
   left: 90%;
@@ -90,6 +91,8 @@ const Tooltip = styled.div`
   text-align: center;
   font-size: 14px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* Add this line */
+  
   ${User}:hover & {
     display: block;
   }

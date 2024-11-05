@@ -1,8 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components'
-
-import WatchAlongRoom from '../pages/WatchAlongRoom';
+import styled from 'styled-components';
 
 const Container = styled.div`
     width: 100%;
@@ -14,7 +12,9 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1000;
 `;
+
 const Wrapper = styled.div`
     width: 600px;
     height: 600px;
@@ -28,17 +28,19 @@ const Wrapper = styled.div`
     gap: 20px;
     position: relative;
 `;
+
 const Title = styled.h1`
     text-align: center;
     margin-top: 30px;
 `;
+
 const Close = styled.div`
     position: absolute;
     top: 30px;
     right: 10px;
     cursor: pointer;
-
 `;
+
 const Input = styled.input`
     border: 1px solid #969696;
     color: aliceblue;
@@ -46,66 +48,63 @@ const Input = styled.input`
     padding: 10px;
     background-color: transparent;
 `;
+
 const Buttons = styled.button`
     border-radius: 3px;
     border: none;
     padding: 10px 30px;
     font-weight: 500;
     cursor: pointer;
-    background-color : #373737;
+    background-color: #373737;
     color: #e4e4e4;
 `;
+
 const Label = styled.label`
     font-size: 14px;
 `;
 
-const WatchRoom = ({setOpen}) => {
-  const [videoLink, setVideoLink] = useState("");
-  const [roomCode, setRoomCode] = useState("");
-  const navigate = useNavigate();
+const WatchRoom = ({ setOpen }) => {
+    const [videoLink, setVideoLink] = useState("");
+    const [roomCode, setRoomCode] = useState("");
+    const navigate = useNavigate();
 
-  const createRoom = () => {
-    if (!videoLink) {
-      alert("Please provide a video link!");
-      return;
-    }
+    //watchalong room creation block
+    const createRoom = () => {
+        if (!videoLink) {
+            alert("Please provide a video link!");
+            return;
+        }
 
-    const newRoomCode = Math.random().toString(36).substring(2, 7); // Generate random room code
-    // Redirect to WatchAlongRoom with videoLink and roomCode
-    setOpen(false);
-    navigate(`/watchalong/${newRoomCode}`, { state: { videoLink } });
-  };
+        const newRoomCode = Math.random().toString(36).substring(2, 7); // Generate random room code
+        setOpen(false);
+        // Redirect to WatchAlongRoom with videoLink and roomCode
+        navigate(`/watchalong/${newRoomCode}`, { state: { videoLink } });
+    };
 
-  const joinRoom = () => {
-    if (!roomCode) {
-      alert("Please enter a room code!");
-      return;
-    }
-    setOpen(false);
-    navigate(`/watchalong/${roomCode}`);
-  };
+    const joinRoom = () => {
+        if (!roomCode) {
+            alert("Please enter a room code!");
+            return;
+        }
+        setOpen(false);
+        navigate(`/watchalong/${roomCode}`);
+    };
 
-  return (
-    <Container>
-      <Wrapper>
-        <Close onClick={()=>setOpen(false)} >X</Close>
-        <Title>WatchAlong</Title>
-        <Label>Create Watchalong:</Label>
-        <Input placeholder='Video Link' value={videoLink}
-        onChange={(e)=> setVideoLink(e.target.value)}
-        />
+    return (
+        <Container>
+            <Wrapper>
+                <Close onClick={() => setOpen(false)}>X</Close>
+                <Title>WatchAlong</Title>
+                <Label>Create Watchalong:</Label>
+                <Input placeholder='Video Link' value={videoLink} onChange={(e) => setVideoLink(e.target.value)} />
+                <Buttons onClick={createRoom}>Create Watchalong</Buttons>
 
-        <Buttons onClick={createRoom}>Create Watchalong</Buttons>
-
-        <Label>Join Watchalong:</Label>
-        <Input placeholder='Room Code'
-        value={roomCode}
-        onChange={(e)=> setRoomCode(e.target.value)}
-        />
-        <Buttons onClick={joinRoom}>Join Watchalong</Buttons>
-      </Wrapper>
-    </Container>
-  )
+                <Label>Join Watchalong:</Label>
+                <Input placeholder='Room Code' value={roomCode} onChange={(e) => setRoomCode(e.target.value)} />
+                <Buttons onClick={joinRoom}>Join Watchalong</Buttons>
+            </Wrapper>
+        </Container>
+    );
 }
 
-export default WatchRoom
+export default WatchRoom;
