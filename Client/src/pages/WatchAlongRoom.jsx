@@ -33,7 +33,7 @@ const Title = styled.h1`
 const Details = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
 `;
 
 const Info = styled.span`
@@ -111,13 +111,13 @@ const Subscribe = styled.button`
 `;
 
 const VideoPlayer = styled.video`
-    max-height: 720px;
+    max-height: 820px;
     width: 100%;
     background-color: #969696;
 `;
 const RoomCode = styled.div`
     height: 30px;
-    width: 60%;
+    width: 199px;
     background-color: #4d4dff;
     display: flex;
     align-items: center;
@@ -127,7 +127,7 @@ const RoomCode = styled.div`
 `;
 const RoomIDDisplay = styled.h1`
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     color: aliceblue;
     font-family: 'Roboto', sans-serif;
 `;
@@ -200,37 +200,17 @@ const WatchAlongRoom = () => {
                         onError={(e) => console.error("Video load error:", e)}
                     />
                 </VideoWrapper>
-                <Title>Long video to test Watch Along Feature</Title>
+                <Title>Watch Along Room</Title>
                 <Details>
-                    <Info>1.3M views 14 hours ago</Info>
-                    <Buttons>
-                        <Button><ThumbUpIcon />100</Button>
-                        <Button><ThumbDownIcon />Dislike</Button>
-                        <Button><ReplyIcon />Share</Button>
-                        <Button><FavoriteIcon />Favorite</Button>
-                    </Buttons>
+                <RoomCode>
+                  <RoomIDDisplay>Current Room Code : <strong> {roomCode}</strong> </RoomIDDisplay>
+                </RoomCode>
                 </Details>
-                <Hr />
-                <Channel>
-                    <ChannelInfo>
-                        <Image src={Channel_image} />
-                        <ChannelDetailes>
-                            <ChannelName>Snooplay</ChannelName>
-                            <SubCount>20 Subscribers</SubCount>
-                            <VideoDescription>
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                            </VideoDescription>
-                        </ChannelDetailes>
-                    </ChannelInfo>
-                    <Subscribe>Subscription</Subscribe>
-                </Channel>
                 <Hr />
             </Content>
             <ChatOption>
                 {/* Chat functionality can be added here */}
-                <RoomCode>
-                  <RoomIDDisplay>Current Room Code : <strong> {roomCode}</strong> </RoomIDDisplay>
-                </RoomCode>
+                
             </ChatOption>
         </Container>
     );
