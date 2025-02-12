@@ -7,8 +7,10 @@ import HistoryIcon from "@mui/icons-material/History";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 import ReduceCapacityIcon from "@mui/icons-material/ReduceCapacity";
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import { Link } from "react-router-dom";
 import WatchRoom from "./WatchRoom";
+import ParentalControlModal from "./ParentalControlModal";
 
 const Container = styled.div`
   flex: 1;
@@ -68,6 +70,19 @@ const WaBtn = styled.button`
 
 const Menu = () => {
   const [open, setOpen] = useState(false);
+  const [isParentalOpen, setIsParentalOpen] = useState(false);
+  const [watchTimeLimit, setWatchTimeLimit] = useState(null);
+
+  const handleSaveParentalControl = (timeLimit) => {
+    setWatchTimeLimit(timeLimit);
+    console.log("Parental control watch limit set to:", timeLimit, "minutes");
+  };
+
+  const handleCloseModal = () => {
+    console.log("Closing modal");
+    setIsParentalOpen(false);  // This should close the modal
+  };
+
   return (
     <>
       <Container>
@@ -110,9 +125,9 @@ const Menu = () => {
           </WatchAlong>
           <Hr />
 
-          <Item>
-            <SettingsSuggestIcon />
-            Settings
+          <Item onClick={() => setIsParentalOpen(true)}>
+            <SupervisorAccountIcon />
+            Parental Control
           </Item>
           <Item>
             <HelpCenterIcon />
@@ -121,6 +136,13 @@ const Menu = () => {
         </Wrapper>
       </Container>
       {open && <WatchRoom setOpen={setOpen}/> }
+      {isParentalOpen && 
+      <ParentalControlModal 
+      isOpen={isParentalOpen} 
+      onClose={handleCloseModal} 
+      onSave={handleSaveParentalControl}/>
+      }
+      
     </>
   );
 };

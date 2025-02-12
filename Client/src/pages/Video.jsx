@@ -96,7 +96,7 @@ const VideoDescription = styled.p`
 `;
 
 const Subscribe = styled.button`
-  background-color: #4d4dff;
+  background-color: #d4d4ff;
   font-weight: 500;
   color: aliceblue;
   border: none;
@@ -118,13 +118,30 @@ const VideoFrame = styled.video`
   object-fit: cover;
 `;
 
+const TimerContainer = styled.div`
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: aliceblue;
+  height: 40px;
+  width: 150px;
+  background-color: #4d4dff;
+  border-radius: 10px;
+`;
+
 const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
   const { currentVideo } = useSelector((state) => state.video);
   const dispatch = useDispatch();
   const path = useLocation().pathname.split("/")[2];
   const [channel, setChannel] = useState({});
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
+  const [timer, setTimer] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const videoRef = React.useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -140,111 +157,65 @@ const Video = () => {
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false);
       }
     };
-
     fetchData();
   }, [path, dispatch]);
 
-  if (loading) {
-    return <div>Loading...</div>; // Loading indicator
-  }
+  useEffect(() => {
+    // Retrieve time limit from localStorage
+    const savedTimeLimit = localStorage.getItem("parentalTimeLimit");
+    if (savedTimeLimit) {
+      setTimeLeft(parseInt(savedTimeLimit, 10) * 60); // Convert minutes to seconds
+    }
+  }, []);
 
-  const handleLike = async ()=>{
-    await axios.put(`http://localhost:8000/api/users/like/${currentVideo._id}`,{}, { withCredentials: true })
-    dispatch(like(currentUser._id))
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timerId = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(timerId);
+    } else if (timeLeft === 0 && videoRef.current) {
+      videoRef.current.pause();
+    }
+  }, [timeLeft]);
+
+  const startTimer = () => {
+    setTimeLeft(timer * 60);
   };
-  const handleDislike = async ()=>{
-    await axios.put(`http://localhost:8000/api/users/dislike/${currentVideo._id}`,{}, { withCredentials: true }
-    )
-    dispatch(dislike(currentUser._id))
 
-  }
-  const handleSub = async ()=>{
-    // currentUser.subscribedUsers.includes(channel?._id) ?
-    // await axios.put(`http://localhost:8000/api/users/unsub/${channel._id}`,{}, { withCredentials: true }) :
-    // await axios.put(`http://localhost:8000/api/users/sub/${channel._id}`,{}, { withCredentials: true })
-    // dispatch(subscription(channel._id))
-    if (!channel?._id) {
-      console.error("Channel data is missing.");
-      return; // Exit if channel data is missing
-    }
-    try {
-      if (currentUser.subscribedUsers.includes(channel._id)) {
-        await axios.put(
-          `http://localhost:8000/api/users/unsub/${channel._id}`,
-          {},
-          { withCredentials: true }
-        );
-      } else {
-        await axios.put(
-          `http://localhost:8000/api/users/sub/${channel._id}`,
-          {},
-          { withCredentials: true }
-        );
-      }
-      dispatch(subscription(channel._id));
-    } catch (err) {
-      console.error(err);
-    }
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
     <Container>
-      <Content> 
+      <Content>
         <VideoWrapper>
-          <VideoFrame src={currentVideo.videoUrl} controls/>
+          <VideoFrame ref={videoRef} src={currentVideo.videoUrl} controls />
+          <TimerContainer>
+            {/* <input
+              type="number"
+              value={timer}
+              onChange={(e) => setTimer(e.target.value)}
+              placeholder="Set timer (min)"
+            /> */}
+            {/* <button onClick={startTimer}>Start Timer</button> */}
+            {timeLeft > 0 && <span>Time Left: {Math.floor(timeLeft / 60)}:{timeLeft % 60}</span>}
+          </TimerContainer>
         </VideoWrapper>
-        <Title>{currentVideo?.title || "Video Title"}</Title>{" "}
-        {/* Optional chaining */}
+        <Title>{currentVideo?.title || "Video Title"}</Title>
         <Details>
           <Info>
             {currentVideo?.videoViews} views {format(currentVideo?.createdAt)}
-          </Info>{" "}
-          {/* Optional chaining */}
-          <Buttons>
-            <Button onClick={handleLike}> 
-              {currentVideo?.likes?.includes(currentUser?._id) ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
-            {currentVideo?.likes?.length }
-            </Button>
-            <Button onClick={handleDislike}>
-              {currentVideo?.dislikes?.includes(currentUser?._id) ? <ThumbDownIcon /> :  <ThumbDownOffAltIcon />}
-                Dislike
-              </Button>
-            
-
-            <Button>
-              <ReplyIcon />
-              Share
-            </Button>
-            
-            <Button>
-              <FavoriteIcon />
-              Favorite
-            </Button>
-          </Buttons>
+          </Info>
         </Details>
-        <Channel>
-          <ChannelInfo>
-            <Image src={channel?.img} alt="channel image" />{" "}
-            {/* Fallback image */}
-            <ChannelDetailes>
-              <ChannelName>{channel?.name || "Channel Name"}</ChannelName>{" "}
-              {/* Fallback channel name */}
-              <SubCount>{channel?.subscribers || 0} Subscribers</SubCount>
-              <VideoDescription>
-                {currentVideo?.desc || "description goes here"}{" "}
-                {/* Fallback description */}
-              </VideoDescription>
-            </ChannelDetailes>
-          </ChannelInfo>
-          <Subscribe onClick={handleSub}>{currentUser?.subscribedUsers?.includes(channel?._id) ? "Subscribed" : "Subscribe"}</Subscribe>
-        </Channel>
-        <Comments  videoId={currentVideo._id}/>
+        <Comments videoId={currentVideo._id} />
       </Content>
       <Title>Recommendations</Title>
-      <Recommendation tags={currentVideo.tags}/>
+      <Recommendation tags={currentVideo.tags} />
     </Container>
   );
 };
