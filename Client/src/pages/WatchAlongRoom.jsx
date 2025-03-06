@@ -197,6 +197,7 @@ const WatchAlongRoom = () => {
                         controls
                         onPlay={handlePlay}
                         onPause={handlePause}
+                        
                         onError={(e) => console.error("Video load error:", e)}
                     />
                 </VideoWrapper>
