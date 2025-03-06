@@ -15,6 +15,7 @@ import { dislike, fetchSuccess, like } from "../redux/videoSlice";
 import { format } from "timeago.js";
 import { subscription } from "../redux/userSlice";
 import Recommendation from "../Components/Recommendation";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const Container = styled.div`
   display: flex;
@@ -195,16 +196,18 @@ const Video = () => {
       <Content>
         <VideoWrapper>
           <VideoFrame ref={videoRef} src={currentVideo.videoUrl} controls />
-          <TimerContainer>
-            {/* <input
-              type="number"
-              value={timer}
-              onChange={(e) => setTimer(e.target.value)}
-              placeholder="Set timer (min)"
-            /> */}
-            {/* <button onClick={startTimer}>Start Timer</button> */}
-            {timeLeft > 0 && <span>Time Left: {Math.floor(timeLeft / 60)}:{timeLeft % 60}</span>}
-          </TimerContainer>
+          {timeLeft > 0 && (
+  <TimerContainer>
+    <span>Time Left: {Math.floor(timeLeft / 60)}:{timeLeft % 60}</span>
+    <DeleteIcon 
+      onClick={() => {
+        localStorage.removeItem("parentalTimeLimit");
+        setTimeLeft(0); // Reset timer to allow unlimited play
+      }} 
+      style={{ cursor: "pointer" }} 
+    />
+  </TimerContainer>
+)}
         </VideoWrapper>
         <Title>{currentVideo?.title || "Video Title"}</Title>
         <Details>

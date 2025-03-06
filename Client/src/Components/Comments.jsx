@@ -71,6 +71,7 @@ const Comments = ({videoId}) => {
             headers: {
               Authorization: `Bearer ${currentUser?.token}`, 
             },
+            withCredentials: true,
           }
         );
   

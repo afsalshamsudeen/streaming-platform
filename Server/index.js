@@ -26,7 +26,7 @@ const connect = ()=>{
 
 app.use(cors({
     origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT'],
+    methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'] 
 }));
@@ -38,6 +38,7 @@ app.use("/api/users", userRoutes)
 app.use("/api/videos", videoRoutes)
 app.use("/api/comments", commentRoutes)
 app.use("/api/watchalong", watchAlongRoutes);
+
 
 app.use((err, req, res, next)=>{
     const status = err.status || 500;
@@ -53,7 +54,7 @@ app.use((err, req, res, next)=>{
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173", // Your frontend URL
+        origin: "http://localhost:5173",
         methods: ["GET", "POST"],
     },
 });
