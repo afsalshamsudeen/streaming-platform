@@ -7,10 +7,11 @@ import HistoryIcon from "@mui/icons-material/History";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 import ReduceCapacityIcon from "@mui/icons-material/ReduceCapacity";
-import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import { Link } from "react-router-dom";
 import WatchRoom from "./WatchRoom";
 import ParentalControlModal from "./ParentalControlModal";
+import SettingsModal from "../Components/Settings.jsx";  // Import the modal
 
 const Container = styled.div`
   flex: 1;
@@ -37,6 +38,7 @@ const Logo = styled.div`
 const Img = styled.img`
   height: 35px;
 `;
+
 const Item = styled.div`
   display: flex;
   align-items: center;
@@ -53,7 +55,9 @@ const Hr = styled.hr`
   margin: 15px 0px;
   border: 0.5px solid #373737;
 `;
+
 const WatchAlong = styled.div``;
+
 const WaBtn = styled.button`
   padding: 5px 15px;
   background-color: #4d4dff;
@@ -71,23 +75,17 @@ const WaBtn = styled.button`
 const Menu = () => {
   const [open, setOpen] = useState(false);
   const [isParentalOpen, setIsParentalOpen] = useState(false);
-  const [watchTimeLimit, setWatchTimeLimit] = useState(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleSaveParentalControl = (timeLimit) => {
-    setWatchTimeLimit(timeLimit);
     console.log("Parental control watch limit set to:", timeLimit, "minutes");
-  };
-
-  const handleCloseModal = () => {
-    console.log("Closing modal");
-    setIsParentalOpen(false);  // This should close the modal
+    setIsParentalOpen(false);
   };
 
   return (
     <>
       <Container>
         <Wrapper>
-          
           <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
             <Logo>
               <Img src={snooplay_logo} />
@@ -103,17 +101,17 @@ const Menu = () => {
           </Link>
 
           <Link to="trends" style={{ textDecoration: "none", color: "inherit" }}>
-          <Item>
-            <ExploreIcon />
-            Trend
-          </Item>
+            <Item>
+              <ExploreIcon />
+              Trend
+            </Item>
           </Link>
 
           <Link to="subscriptions" style={{ textDecoration: "none", color: "inherit" }}>
-          <Item>
-            <HistoryIcon />
-            Following
-          </Item>
+            <Item>
+              <HistoryIcon />
+              Following
+            </Item>
           </Link>
 
           <Hr />
@@ -129,22 +127,26 @@ const Menu = () => {
             <SupervisorAccountIcon />
             Parental Control
           </Item>
-          <Item>
-            <HelpCenterIcon />
-            Help
+
+          <Item onClick={() => setIsSettingsOpen(true)}>  {/* Open settings modal */}
+            <SettingsSuggestIcon />
+            Settings
           </Item>
         </Wrapper>
       </Container>
-      {open && <WatchRoom setOpen={setOpen}/> }
-      {isParentalOpen && 
-      <ParentalControlModal 
-      isOpen={isParentalOpen} 
-      onClose={handleCloseModal} 
-      onSave={handleSaveParentalControl}/>
-      }
-      
+
+      {open && <WatchRoom setOpen={setOpen} />}
+      {isParentalOpen && (
+        <ParentalControlModal 
+          isOpen={isParentalOpen} 
+          onClose={() => setIsParentalOpen(false)} 
+          onSave={handleSaveParentalControl} 
+        />
+      )}
+      {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />} 
     </>
   );
 };
 
 export default Menu;
+
