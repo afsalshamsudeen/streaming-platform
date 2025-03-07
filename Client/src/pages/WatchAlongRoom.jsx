@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import io from 'socket.io-client';
+import ChatBox from "../Components/ChatBox.jsx";
 
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
@@ -211,6 +212,7 @@ const WatchAlongRoom = () => {
             </Content>
             <ChatOption>
                 {/* Chat functionality can be added here */}
+                <ChatBox roomId={roomCode} username="User1" />
                 
             </ChatOption>
         </Container>
