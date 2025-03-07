@@ -140,7 +140,6 @@ const Video = () => {
   const path = useLocation().pathname.split("/")[2];
   const [channel, setChannel] = useState({});
   const [loading, setLoading] = useState(true);
-  const [timer, setTimer] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
   const videoRef = React.useRef(null);
 
@@ -165,10 +164,9 @@ const Video = () => {
   }, [path, dispatch]);
 
   useEffect(() => {
-    // Retrieve time limit from localStorage
     const savedTimeLimit = localStorage.getItem("parentalTimeLimit");
     if (savedTimeLimit) {
-      setTimeLeft(parseInt(savedTimeLimit, 10) * 60); // Convert minutes to seconds
+      setTimeLeft(parseInt(savedTimeLimit, 10) * 60);
     }
   }, []);
 
@@ -195,20 +193,28 @@ const Video = () => {
     }
   };
 
+  const handlePlayAttempt = () => {
+    if (timeLeft === 0) {
+      const enteredPin = prompt("Enter 4-digit PIN to continue watching:");
+      const savedPin = localStorage.getItem("parentalPin");
+      if (enteredPin !== savedPin) {
+        alert("Incorrect PIN! Video cannot be played.");
+        if (videoRef.current) videoRef.current.pause();
+      }
+    }
+  };
 
   return (
     <Container>
       <Content>
         <VideoWrapper>
-          <VideoFrame ref={videoRef} src={currentVideo.videoUrl} controls />
+          <VideoFrame ref={videoRef} src={currentVideo.videoUrl} controls onPlay={handlePlayAttempt} />
           {timeLeft > 0 && (
-  <TimerContainer>
-    <span>Time Left: {Math.floor(timeLeft / 60)}:{timeLeft % 60}</span>
-    <DeleteIcon 
-      onClick={handleDeleteParentalControl} style={{ cursor: "pointer" }}
-    />
-  </TimerContainer>
-)}
+            <TimerContainer>
+              <span>Time Left: {Math.floor(timeLeft / 60)}:{timeLeft % 60}</span>
+              <DeleteIcon onClick={handleDeleteParentalControl} style={{ cursor: "pointer" }} />
+            </TimerContainer>
+          )}
         </VideoWrapper>
         <Title>{currentVideo?.title || "Video Title"}</Title>
         <Details>
