@@ -27,10 +27,11 @@ const connect = () => {
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "OPTIONS"],
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: "http://localhost:5173", // ✅ Frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // ✅ Allow all required methods
+    credentials: true, // ✅ Must be true to allow cookies
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"], // ✅ Include Cookie
+    optionsSuccessStatus: 200, // ✅ Prevents CORS errors with OPTIONS requests
   })
 );
 
