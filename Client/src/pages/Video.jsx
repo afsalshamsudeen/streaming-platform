@@ -1,116 +1,30 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
-import ReplyIcon from "@mui/icons-material/Reply";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import Comments from "../Components/Comments";
-import Card from "../Components/Card";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { dislike, fetchSuccess, like } from "../redux/videoSlice";
+import { fetchSuccess } from "../redux/videoSlice";
 import { format } from "timeago.js";
-import { subscription } from "../redux/userSlice";
+import Comments from "../Components/Comments";
 import Recommendation from "../Components/Recommendation";
-import DeleteIcon from '@mui/icons-material/Delete';
 
 const Container = styled.div`
   display: flex;
   gap: 24px;
+  align-items: flex-start;
 `;
 
 const Content = styled.div`
   flex: 5;
-`;
-
-const VideoWrapper = styled.div``;
-
-const Title = styled.h1`
-  font-size: 20px;
-  font-weight: 400;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  color: aliceblue;
-`;
-
-const Details = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const Info = styled.span`
-  color: #9b9b9b;
-`;
-
-const Buttons = styled.div`
-  display: flex;
-  gap: 20px;
-  color: aliceblue;
-`;
-
-const Button = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-`;
-
-const Channel = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const ChannelInfo = styled.div`
-  display: flex;
-  gap: 20px;
-`;
-
-const Image = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-`;
-
-const ChannelDetailes = styled.div`
   display: flex;
   flex-direction: column;
-  color: aliceblue;
+  color: white;
 `;
 
-const ChannelName = styled.span`
-  font-weight: 400;
-`;
-
-const SubCount = styled.span`
-  color: #9b9b9b;
-  margin-top: 5px;
-  margin-bottom: 20px;
-  font-size: 12px;
-`;
-
-const VideoDescription = styled.p`
-  font-size: 14px;
-`;
-
-const Subscribe = styled.button`
-  background-color: #d4d4ff;
-  font-weight: 500;
-  color: aliceblue;
-  border: none;
-  border-radius: 3px;
-  height: max-content;
-  padding: 10px 20px;
-  cursor: pointer;
-`;
-
-const VideoPlayer = styled.div`
-  height: 507px;
+const VideoWrapper = styled.div`
+  position: relative;
   width: 100%;
-  background-color: #969696;
 `;
 
 const VideoFrame = styled.video`
@@ -120,27 +34,81 @@ const VideoFrame = styled.video`
 `;
 
 const TimerContainer = styled.div`
-  align-items: center;
-  justify-content: center;
-  margin-top: 10px;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
   display: flex;
   align-items: center;
   gap: 10px;
   color: aliceblue;
-  height: 40px;
-  width: 150px;
   background-color: #4d4dff;
+  padding: 10px;
   border-radius: 10px;
+  font-weight: bold;
+  margin-top: 40px;
+  position: relative;
+  height: 30px;
+  width: 130px;
+`;
+
+const PinOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: ${({ show }) => (show ? "flex" : "none")};
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 24px;
+  z-index: 999;
+`;
+
+const PinInput = styled.input`
+  font-size: 20px;
+  padding: 10px;
+  margin-top: 10px;
+  text-align: center;
+  width: 150px;
+  border-radius: 5px;
+  border: none;
+`;
+
+const PinButton = styled.button`
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #4d4dff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+`;
+
+const Title = styled.h1`
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-size: 22px;
+`;
+
+const VideoInfo = styled.span`
+  font-size: 14px;
+  color: gray;
+  margin-bottom: 20px;
 `;
 
 const Video = () => {
-  const { currentUser } = useSelector((state) => state.user);
   const { currentVideo } = useSelector((state) => state.video);
   const dispatch = useDispatch();
   const path = useLocation().pathname.split("/")[2];
   const [channel, setChannel] = useState({});
   const [loading, setLoading] = useState(true);
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [showPinPrompt, setShowPinPrompt] = useState(false);
+  const [pin, setPin] = useState("");
   const videoRef = React.useRef(null);
 
   useEffect(() => {
@@ -171,13 +139,19 @@ const Video = () => {
   }, []);
 
   useEffect(() => {
+    if (timeLeft === null) return;
+
     if (timeLeft > 0) {
       const timerId = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
+        setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
       }, 1000);
       return () => clearInterval(timerId);
-    } else if (timeLeft === 0 && videoRef.current) {
-      videoRef.current.pause();
+    } else if (timeLeft === 0) {
+      setShowPinPrompt(true);
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.muted = true;
+      }
     }
   }, [timeLeft]);
 
@@ -187,20 +161,23 @@ const Video = () => {
     if (enteredPin === savedPin) {
       localStorage.removeItem("parentalTimeLimit");
       localStorage.removeItem("parentalPin");
-      setTimeLeft(0);
+      setTimeLeft(null);
+      setShowPinPrompt(false);
     } else {
       alert("Incorrect PIN!");
     }
   };
 
-  const handlePlayAttempt = () => {
-    if (timeLeft === 0) {
-      const enteredPin = prompt("Enter 4-digit PIN to continue watching:");
-      const savedPin = localStorage.getItem("parentalPin");
-      if (enteredPin !== savedPin) {
-        alert("Incorrect PIN! Video cannot be played.");
-        if (videoRef.current) videoRef.current.pause();
+  const handlePinSubmit = () => {
+    const savedPin = localStorage.getItem("parentalPin");
+    if (pin === savedPin) {
+      setShowPinPrompt(false);
+      if (videoRef.current) {
+        videoRef.current.play();
+        videoRef.current.muted = false;
       }
+    } else {
+      alert("Incorrect PIN!");
     }
   };
 
@@ -208,24 +185,41 @@ const Video = () => {
     <Container>
       <Content>
         <VideoWrapper>
-          <VideoFrame ref={videoRef} src={currentVideo.videoUrl} controls onPlay={handlePlayAttempt} />
-          {timeLeft > 0 && (
+          <VideoFrame ref={videoRef} src={currentVideo?.videoUrl} controls />
+          {timeLeft !== null && timeLeft > 0 && (
             <TimerContainer>
-              <span>Time Left: {Math.floor(timeLeft / 60)}:{timeLeft % 60}</span>
-              <DeleteIcon onClick={handleDeleteParentalControl} style={{ cursor: "pointer" }} />
+              <span>
+                Time Left: {Math.floor(timeLeft / 60)}:
+                {timeLeft % 60 < 10 ? "0" : ""}
+                {timeLeft % 60}
+              </span>
+              <DeleteIcon
+                onClick={handleDeleteParentalControl}
+                style={{ cursor: "pointer" }}
+              />
             </TimerContainer>
           )}
         </VideoWrapper>
+
+        {/* PIN Overlay - Only Shows When Timer Expires */}
+        <PinOverlay show={showPinPrompt}>
+          <h2>Enter 4-digit PIN to Continue</h2>
+          <PinInput
+            type="password"
+            maxLength="4"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+          />
+          <PinButton onClick={handlePinSubmit}>Submit</PinButton>
+        </PinOverlay>
+
         <Title>{currentVideo?.title || "Video Title"}</Title>
-        <Details>
-          <Info>
-            {currentVideo?.videoViews} views {format(currentVideo?.createdAt)}
-          </Info>
-        </Details>
-        <Comments videoId={currentVideo._id} />
+        <VideoInfo>
+          {currentVideo?.videoViews} views • {format(currentVideo?.createdAt)}
+        </VideoInfo>
+        <Comments videoId={currentVideo?._id} />
       </Content>
-      <Title>Recommendations</Title>
-      <Recommendation tags={currentVideo.tags} />
+      <Recommendation tags={currentVideo?.tags} />
     </Container>
   );
 };

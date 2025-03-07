@@ -4,11 +4,11 @@ import Comment from "../Models/Comments.js"
 export const addComment = async (req,res,next)=>{
     const newComment = new Comment({...req.body, userId:req.user.id})
     try{
-        const savedComment = await newComment.save()
-        res.status(200).send(savedComment)
+        const savedComment = await newComment.save();
+        res.status(200).send(savedComment);
     }catch(err){
 
-        next(err)
+        next(err);
     }
 }
 export const deleteComment = async (req,res,next)=>{
