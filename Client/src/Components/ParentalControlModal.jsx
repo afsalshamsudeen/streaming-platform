@@ -22,6 +22,18 @@ const ModalContent = styled.div`
   text-align: center;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
   color: aliceblue;
+  div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+`;
+
+const Input = styled.input`
+  width: 100px;
+  padding: 5px;
+  margin-bottom: 10px;
 `;
 
 const Button = styled.button`
@@ -32,7 +44,7 @@ const Button = styled.button`
   margin-top: 10px;
   cursor: pointer;
   border-radius: 5px;
-  
+
   &:hover {
     background: #0056b3;
   }
@@ -40,26 +52,19 @@ const Button = styled.button`
 
 const CloseButton = styled(Button)`
   background: #dc3545;
-  
   &:hover {
     background: #a71d2a;
   }
 `;
-const ButnContainer = styled.div`
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 10px;
-
-`;
 
 const ParentalControlModal = ({ isOpen, onClose, onSave }) => {
   const [timeLimit, setTimeLimit] = useState(60);
+  const [pin, setPin] = useState("");
 
   const handleSave = () => {
     localStorage.setItem("parentalTimeLimit", timeLimit);
     localStorage.setItem("parentalStartTime", Date.now());
+    localStorage.setItem("parentalPin", pin); // Save PIN
     onSave(timeLimit);
     onClose();
   };
@@ -68,20 +73,27 @@ const ParentalControlModal = ({ isOpen, onClose, onSave }) => {
     isOpen && (
       <ModalOverlay>
         <ModalContent>
-          <h2>Set Parental Control Timer</h2>
-          <p>Set the allowed watch time (in minutes):</p>
-          <input
+          <h2>Set Parental Control</h2>
+          <p>Allowed watch time (minutes):</p>
+          <Input
             type="number"
             value={timeLimit}
             onChange={(e) => setTimeLimit(e.target.value)}
             min="10"
             max="300"
-            style={{ width: "100px", padding: "5px", marginBottom: "10px" }}
           />
-          <ButnContainer>
-            <Button onClick={handleSave}>Save</Button>
-            <CloseButton onClick={onClose}>Cancel</CloseButton>
-          </ButnContainer>
+          <div>
+
+          <p>Set a 4-digit PIN:</p>
+          <Input
+            type="password"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            maxLength={4}
+            />
+            </div>
+          <Button onClick={handleSave}>Save</Button>
+          <CloseButton onClick={onClose}>Cancel</CloseButton>
         </ModalContent>
       </ModalOverlay>
     )

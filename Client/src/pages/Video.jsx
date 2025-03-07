@@ -183,13 +183,18 @@ const Video = () => {
     }
   }, [timeLeft]);
 
-  const startTimer = () => {
-    setTimeLeft(timer * 60);
+  const handleDeleteParentalControl = () => {
+    const enteredPin = prompt("Enter 4-digit PIN to disable Parental Control:");
+    const savedPin = localStorage.getItem("parentalPin");
+    if (enteredPin === savedPin) {
+      localStorage.removeItem("parentalTimeLimit");
+      localStorage.removeItem("parentalPin");
+      setTimeLeft(0);
+    } else {
+      alert("Incorrect PIN!");
+    }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <Container>
@@ -200,11 +205,7 @@ const Video = () => {
   <TimerContainer>
     <span>Time Left: {Math.floor(timeLeft / 60)}:{timeLeft % 60}</span>
     <DeleteIcon 
-      onClick={() => {
-        localStorage.removeItem("parentalTimeLimit");
-        setTimeLeft(0); // Reset timer to allow unlimited play
-      }} 
-      style={{ cursor: "pointer" }} 
+      onClick={handleDeleteParentalControl} style={{ cursor: "pointer" }}
     />
   </TimerContainer>
 )}
