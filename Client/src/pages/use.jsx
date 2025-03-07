@@ -108,10 +108,10 @@ const Navbar = () => {
           )}
         </Wrapper>
       </Container>
-      {open && <Upload setOpen={setOpen} />} 
+      {open && <Upload setOpen={setOpen} />}
       {open && <UploadVideo setOpen={setOpen} />}
     </>
   );
 };
 
-export default Navbar;
+export default Navbar;
