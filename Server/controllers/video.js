@@ -8,6 +8,7 @@ export const addVideo = async (req, res, next) => {
   const { videoUrl, imgUrl, ...otherData } = req.body;
 
   // Generate public URLs
+  const bucketname = "snooplay-a5644.appspot.com";
   const publicVideoUrl = await generatePublicUrl(videoUrl);
   const publicImgUrl = await generatePublicUrl(imgUrl);
 
@@ -142,21 +143,21 @@ const generatePublicUrl = async (fileUrl) => {
     const filePath = fileUrl.split(`${bucket.name}/`)[1]; // Extract relative path
     if (!filePath) throw new Error("Invalid file URL format");
 
-    const file = bucket.file(filePath);
-    const token = uuidv4();
+    // const file = bucket.file(filePath);
+    // const token = uuidv4();
 
-    await file.setMetadata({
-      metadata: {
-        firebaseStorageDownloadTokens: token,
-      },
-    });
+    // await file.setMetadata({
+    //   metadata: {
+    //     firebaseStorageDownloadTokens: token,
+    //   },
+    // });
 
     // Construct public URL
     return `https://firebasestorage.googleapis.com/v0/b/${
       bucket.name
-    }/o/${encodeURIComponent(filePath)}?alt=media&token=${token}`;
+    }/o/${encodeURIComponent(filePath)}?alt=media`;
   } catch (error) {
     console.error("Error generating public URL:", error);
-    return fileUrl; 
+    return fileUrl;
   }
 };
