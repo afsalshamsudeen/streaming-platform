@@ -1,6 +1,5 @@
 import admin from "firebase-admin";
 import { getStorage } from "firebase-admin/storage";
-import { v4 as uuidv4 } from "uuid";
 import { readFileSync } from "fs";
 
 const service_account = JSON.parse(readFileSync("service_account.json"));
@@ -19,10 +18,9 @@ export const generateSignedUrl = async (req, res) => {
       return res.status(400).json({ error: "Missing fileName or contentType" });
     }
 
-    const filePath = `uploads/${uuidv4()}_${fileName}`;
+    const filePath = `${Date.now()}_${fileName}`;
     const file = bucket.file(filePath);
     const [url] = await file.getSignedUrl({
-      version: "v4",
       action: "write",
       expires: Date.now() + 15 * 60 * 1000,
       contentType,

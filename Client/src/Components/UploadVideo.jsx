@@ -166,11 +166,11 @@ const UploadVideo = ({ setOpen }) => {
   const uploadFile = async (file, urlType) => {
     try {
       const uploadUrl = await getSignedUrl(file);
-      delete axios.defaults.headers.common["x-auth-token"];
       const uploadRes = await axios.put(uploadUrl, file, {
         headers: {
           "Content-Type": file.type,
         },
+        withCredentials: false,
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
             (progressEvent.loaded / progressEvent.total) * 100
