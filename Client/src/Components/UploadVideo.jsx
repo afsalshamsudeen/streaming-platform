@@ -147,7 +147,7 @@ const UploadVideo = ({ setOpen }) => {
       const res = await axios.post(
         "http://localhost:8000/api/signed-url",
         {
-          fileName: file.name,
+          fileName: file.name.replace(" ", "_"),
           contentType: file.type,
         },
         {
