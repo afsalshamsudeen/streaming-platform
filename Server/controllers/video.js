@@ -1,11 +1,26 @@
 import { createError } from "../error.js";
 import User from "../Models/User.js";
 import Video from "../Models/Video.js";
+import { getStorage } from "firebase-admin/storage";
+import { v4 as uuidv4 } from "uuid";
 
 export const addVideo = async (req, res, next) => {
-  console.log(req.user.id);
-  console.log(req.body);
-  const newVideo = new Video({ userId: req.user.id, ...req.body });
+  const { videoUrl, imgUrl, ...otherData } = req.body;
+
+  // Generate public URLs
+  const publicVideoUrl = await generatePublicUrl(videoUrl);
+  const publicImgUrl = await generatePublicUrl(imgUrl);
+
+  // Create new video document
+  const newVideo = new Video({
+    userId: req.user.id,
+    videoUrl: publicVideoUrl,
+    imgUrl: publicImgUrl,
+    ...otherData,
+  });
+
+  const savedVideo = await newVideo.save();
+
   try {
     const savedVideo = await newVideo.save();
     res.status(200).json(savedVideo);
@@ -117,5 +132,31 @@ export const search = async (req, res, next) => {
     res.status(200).json(videos);
   } catch (err) {
     next(err);
+  }
+};
+
+const generatePublicUrl = async (fileUrl) => {
+  try {
+    // Extract file path from URL
+    const bucket = getStorage().bucket("snooplay-a5644.appspot.com");
+    const filePath = fileUrl.split(`${bucket.name}/`)[1]; // Extract relative path
+    if (!filePath) throw new Error("Invalid file URL format");
+
+    const file = bucket.file(filePath);
+    const token = uuidv4();
+
+    await file.setMetadata({
+      metadata: {
+        firebaseStorageDownloadTokens: token,
+      },
+    });
+
+    // Construct public URL
+    return `https://firebasestorage.googleapis.com/v0/b/${
+      bucket.name
+    }/o/${encodeURIComponent(filePath)}?alt=media&token=${token}`;
+  } catch (error) {
+    console.error("Error generating public URL:", error);
+    return fileUrl; 
   }
 };
