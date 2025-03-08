@@ -5,6 +5,7 @@ import userRoutes from "./routes/users.js";
 import videoRoutes from "./routes/videos.js";
 import commentRoutes from "./routes/comments.js";
 import authRoutes from "./routes/auth.js";
+import signedurlRoutes from "./routes/signedurl.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import watchAlongRoutes from "./routes/watchAlongRoutes.js";
@@ -27,11 +28,11 @@ const connect = () => {
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // ✅ Frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // ✅ Allow all required methods
-    credentials: true, // ✅ Must be true to allow cookies
-    allowedHeaders: ["Content-Type", "Authorization", "Cookie"], // ✅ Include Cookie
-    optionsSuccessStatus: 200, // ✅ Prevents CORS errors with OPTIONS requests
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    optionsSuccessStatus: 200,
   })
 );
 
@@ -42,6 +43,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/watchalong", watchAlongRoutes);
+app.use("/api/signed-url", signedurlRoutes);
 
 app.use((err, req, res, next) => {
   const status = err.status || 500;
@@ -90,5 +92,5 @@ io.on("connection", (socket) => {
 
 server.listen(8000, () => {
   connect();
-  console.log("Server Up and Running!");
+  console.log("Server Up and Running! ");
 });
