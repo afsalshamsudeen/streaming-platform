@@ -82,6 +82,22 @@ const Menu = () => {
     setIsParentalOpen(false);
   };
 
+  const handleParentalControlClick = () => {
+    const storedTime = localStorage.getItem("parentalTimeLimit");
+    const startTime = localStorage.getItem("parentalStartTime");
+  
+    if (storedTime && startTime) {
+      const elapsedTime = (Date.now() - startTime) / (1000 * 60); // Convert ms to minutes
+      if (elapsedTime < storedTime) {
+        alert("Parental Control is already active! Please wait until it expires.");
+        return;
+      }
+    }
+  
+    setIsParentalOpen(true); // Open modal if no active Parental Control
+  };
+  
+
   return (
     <>
       <Container>
@@ -123,7 +139,7 @@ const Menu = () => {
           </WatchAlong>
           <Hr />
 
-          <Item onClick={() => setIsParentalOpen(true)}>
+          <Item onClick={handleParentalControlClick}>
             <SupervisorAccountIcon />
             Parental Control
           </Item>
