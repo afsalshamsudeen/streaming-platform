@@ -4,10 +4,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { fetchSuccess } from "../redux/videoSlice";
+import {like,dislike, fetchSuccess } from "../redux/videoSlice";
 import { format } from "timeago.js";
 import Comments from "../Components/Comments";
 import Recommendation from "../Components/Recommendation";
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
+import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutlined";
 
 const Container = styled.div`
   display: flex;
@@ -32,7 +36,20 @@ const VideoFrame = styled.video`
   width: 100%;
   object-fit: cover;
 `;
+const Button = styled.div`
+  display: flex;
+  align-items: center;
 
+  gap: 5px;
+  cursor: pointer;
+`;
+const Buttons = styled.div`
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: end;
+  color: ${({ theme }) => theme.text};
+`;
 const TimerContainer = styled.div`
   position: absolute;
   bottom: 20px;
@@ -101,6 +118,7 @@ const VideoInfo = styled.span`
 `;
 
 const Video = () => {
+  const { currentUser } = useSelector((state) => state.user);
   const { currentVideo } = useSelector((state) => state.video);
   const dispatch = useDispatch();
   const path = useLocation().pathname.split("/")[2];
@@ -130,6 +148,15 @@ const Video = () => {
     };
     fetchData();
   }, [path, dispatch]);
+
+  const handleLike = async () => {
+    await axios.put(`http://localhost:8000/api/users/like/${currentVideo._id}`);
+    dispatch(like(currentUser._id));
+  };
+  const handleDislike = async () => {
+    await axios.put(`http://localhost:8000/api/users/dislike/${currentVideo._id}`);
+    dispatch(dislike(currentUser._id));
+  };
 
   useEffect(() => {
     const savedTimeLimit = localStorage.getItem("parentalTimeLimit");
@@ -217,6 +244,29 @@ const Video = () => {
         <VideoInfo>
           {currentVideo?.videoViews} views • {format(currentVideo?.createdAt)}
         </VideoInfo>
+        <Buttons>
+            <Button onClick={handleLike}>
+              {currentVideo.likes?.includes(currentUser?._id) ? (
+                <ThumbUpIcon />
+              ) : (
+                <ThumbUpOutlinedIcon />
+              )}{" "}
+              {currentVideo.likes?.length}
+            </Button>
+            <Button onClick={handleDislike}>
+              {currentVideo.dislikes?.includes(currentUser?._id) ? (
+                <ThumbDownIcon />
+              ) : (
+                <ThumbDownOffAltOutlinedIcon />
+              )}{" "}
+              Dislike
+            </Button>
+            <Button>
+              
+            </Button>
+            <Button>
+            </Button>
+          </Buttons>
         <Comments videoId={currentVideo?._id} />
       </Content>
       <Recommendation tags={currentVideo?.tags} />

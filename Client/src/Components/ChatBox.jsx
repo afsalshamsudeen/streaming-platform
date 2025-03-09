@@ -37,7 +37,7 @@ const ChatBox = ({ roomId }) => {
       <div style={styles.chatBox}>
         {messages.map((msg, index) => (
           <p key={index} style={styles.message}>
-            <strong>{msg.username}:</strong> {msg.message}
+            <strong style={{ color: "green" }}>{msg.username}:</strong> {msg.message}
           </p>
         ))}
       </div>

@@ -56,7 +56,7 @@ const Comment = ({comment}) => {
       <AvatarImg src={channel.img}/>
       <Details>
         <UserName>{channel.name}</UserName>
-        <Date>3 days ago</Date>
+        <Date>1 minute ago</Date>
         <Text>{comment.desc}</Text>
       </Details>
     </Container>
